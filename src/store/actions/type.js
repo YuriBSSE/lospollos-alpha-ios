@@ -1,0 +1,5 @@
+// lospollos
+export const LOSPOLLOS = "LOSPOLLOS";
+export const LOSPOLLOS_LOGIN_ERROR = "LOSPOLLOS_LOGIN_ERROR";
+export const LOSPOLLOS_LOGIN = "LOSPOLLOS_LOGIN";
+
