@@ -1,5 +1,6 @@
+// @ts-nocheck
 
-import React, {useState, useEffect, useMemo, useContext, useRef} from 'react';
+import React, { useState, useEffect, useMemo, useContext, useRef } from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { connect } from 'react-redux';
 import {
@@ -14,7 +15,7 @@ import {
   TouchableOpacity,
   ScrollView,
   TextInput,
-  SafeAreaView,Platform
+  SafeAreaView, Platform
 } from 'react-native';
 import EyeIcon from 'react-native-vector-icons/Entypo';
 import Heading from '../../../components/Heading';
@@ -29,24 +30,28 @@ import {
 } from 'react-native-responsive-dimensions';
 import InputField from '../../../components/InputField';
 import deviceInfo from "react-native-device-info"
-import CheckBox from '@react-native-community/checkbox';
+// import CheckBox from '@react-native-community/checkbox';
 import Toast from 'react-native-toast-message';
-let {width, height} = Dimensions.get('window');
+import MyText from '../../../components/MyText';
+import SignUpVerficationModal from '../../Modal/SignUpVerficationModal';
+import { CheckBox } from 'react-native-elements'
 
-const checkStyle={}
+let { width, height } = Dimensions.get('window');
 
-if(Platform.OS=="ios" && width<=550) {
-  checkStyle.transform=[{scaleX:0.7},{scaleY:0.7}]
+const checkStyle = {}
+
+if (Platform.OS == "ios" && width <= 550) {
+  checkStyle.transform = [{ scaleX: 0.7 }, { scaleY: 0.7 }]
 }
 const tablet = deviceInfo.isTablet();
-const Login = ({navigation, loginAct}) => {
+const Login = ({ navigation, loginAct }) => {
   const password = useRef();
 
   const [submit, setSubmit] = useState(false);
   const [isShowPass, setisShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [toggleCheckBox, setToggleCheckBox] = useState(true);
-
+  const [toggleCheckBox, setToggleCheckBox] = useState(false);
+  const [show, setshow] = useState(false);
   const [fields, setFields] = useState({
     email: '',
     password: '',
@@ -62,20 +67,33 @@ const Login = ({navigation, loginAct}) => {
       };
     });
   }
-console.log(loginAct, "Actions");
+  console.log(loginAct, "Actions");
+
+
+  const func = x => {
+    // console.log(x);
+    if (x == 'sms') {
+      setshow(false)
+      navigation.navigate('forget', {forgot: true, text: 'Un code de réinitialisation du mot de passe a été envoyé par SMS au 06…………76'})
+    }
+    if (x == 'email') {
+      setshow(false)
+      navigation.navigate('forget', {forgot: true, text : 'Un code de réinitialisation du mot de passe a été envoyé à l’adresse mail J………@...........fr'})
+    }
+  };
 
   const callLoginFunc = () => {
-    
-    if(fields.email && fields.password){
-      if(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(fields.email)){
+
+    if (fields.email && fields.password) {
+      if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(fields.email)) {
         loginAct(fields.email, fields.password)
-      }else{
+      } else {
         Toast.show({
           type: 'error',
           text1: 'Please insert a valid email address.',
         });
       }
-    }else{
+    } else {
       Toast.show({
         type: 'error',
         text1: 'Please insert a email and password.',
@@ -84,14 +102,26 @@ console.log(loginAct, "Actions");
   }
   return (
     <View style={StyleSheet.absoluteFill}>
-      <ScrollView style={{backgroundColor: colors.themeblue}}>
+      <ScrollView showsVerticalScrollIndicator={false} style={{ backgroundColor: colors.themeblue }}>
+
+      {
+        show &&
+           <SignUpVerficationModal
+              ModalState={show}
+              ChangeModalState={setshow}
+              callBack={func}
+              navigation={navigation}
+              forget={true}
+            />
+        }
+
         <View
           style={{
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'space-around',
           }}>
-          <View style={{height: responsiveHeight(20)}} />
+          <View style={{ height: responsiveHeight(10) }} />
 
           <View
             style={{
@@ -105,7 +135,7 @@ console.log(loginAct, "Actions");
           />
           <View
             style={{
-              height: responsiveHeight(85),
+              height: responsiveHeight(95),
               width: '100%',
               backgroundColor: 'white',
               borderTopLeftRadius: 25,
@@ -118,9 +148,9 @@ console.log(loginAct, "Actions");
                     style={styles.logo}
                     source={require('../../../assets/logo.png')}
                   />
-                  <View style={{alignSelf: 'center'}}>
+                  <View style={{ alignSelf: 'center' }}>
                     <Heading
-                    
+
                       width={'70%'}
                       color={'black'}
                       align={'center'}
@@ -131,115 +161,160 @@ console.log(loginAct, "Actions");
                 </View>
 
                 <View style={styles.ctn2}>
-                    <View
-                      style={{
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        flexDirection: 'column',
-                        width: '80%',
-                      }}>
-                      <InputField
-                        error={!fields.email && submit}
-                        returnKeyType="next"
-                        onSubmitEditing={() => {
-                          password.current.focus();
-                        }}
-                        getValue={v => getValue('email', v)}
-                        password={false}
-                        value={fields.email}
-                        placeHolder="Adresse mail ou numéro de téléphone"
-                        smallCaps={true}
-                        color="grey"
-                      />
-                      <InputField
-                        inputType="password"
-                        innerRef={password}
-                        error={!fields.password && submit}
-                        getValue={v => getValue('password', v)}
-                        password={!isShowPass}
-                        placeHolder="Mot de passe"
-                        smallCaps={true}
-                        color="grey"
-                        value={fields.password}
-                        rightIcon={() => {
-                          if (isShowPass) {
-                            return (
-                              <Image
+                  <View
+                    style={{
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      flexDirection: 'column',
+                      width: '80%',
+                    }}>
+                    <InputField
+                      error={!fields.email && submit}
+                      returnKeyType="next"
+                      onSubmitEditing={() => {
+                        password.current.focus();
+                      }}
+                      getValue={v => getValue('email', v)}
+                      password={false}
+                      value={fields.email}
+                      placeHolder="Adresse mail ou numéro de téléphone"
+                      smallCaps={true}
+                      color="grey"
+                    />
+                    <InputField
+                      inputType="password"
+                      innerRef={password}
+                      error={!fields.password && submit}
+                      getValue={v => getValue('password', v)}
+                      password={!isShowPass}
+                      placeHolder="Mot de passe"
+                      smallCaps={true}
+                      color="grey"
+                      value={fields.password}
+                      rightIcon={() => {
+                        if (isShowPass) {
+                          return (
+                            <Image
                               style={styles.eye}
                               source={require('../../../assets//openeye.png')}
                             />
-                            );
-                          } else {
-                            return (
-                              <Image
+                          );
+                        } else {
+                          return (
+                            <Image
                               style={styles.eye}
                               source={require('../../../assets//Eyeoff.png')}
                             />
-                            );
-                          }
-                        }}
-                        onPressRghtIcon={() => setisShowPass(prev => !prev)}
-                      />
-                    </View>
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        marginTop: 20,
-                        width: "82%",
-   
-                        alignItems: 'center', 
+                          );
+                        }
+                      }}
+                      onPressRghtIcon={() => setisShowPass(prev => !prev)}
+                    />
+                  </View>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      marginTop: 20,
+                      width: "85%",
+                      // backgroundColor:'red',
+                      alignItems: 'center',
 
-                      }}>
-                        <View style={{
-                          flexDirection:'row', 
-                          alignItems:'center'
-                        }}>
-                          <CheckBox
-                            tintColors={{ true: colors.themeblue, false: 'gray' }}
-                            onFillColor={colors.themeblue}
-                            boxType="circle"
-                            disabled={false}
-                            style={checkStyle}
-                            value={toggleCheckBox}
-                            onValueChange={(newValue) => setToggleCheckBox(newValue)}
-                          />
-                        <Text style={{color: '#000',  fontWeight: '500',}}>Se Souvenir de moi</Text>
-                        </View>
-                      <TouchableOpacity
-                        onPress={() => {
-                          navigation.navigate('forget');
+                    }}>
+                    <View style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      width: '60%'
+                    }}>
+                           <CheckBox
+                        title='Se Souvenir de moi'
+                        checkedIcon='dot-circle-o'
+                        uncheckedIcon='circle-o'
+                        checkedColor={colors.themeblue}
+
+                        containerStyle={{
+                            backgroundColor: 'white',
+                            borderWidth: 0
                         }}
-                        style={{}}>
-                        <Text
-                          style={{
-                            fontWeight: '500',
-                            color: '#000',
-                            textDecorationStyle: 'solid',
-                            textDecorationLine: 'underline',
-                          }}>
-                          Mot de passe oublié ?
-                        </Text>
-                      </TouchableOpacity>
+                        
+                        textStyle={{
+                          fontSize: responsiveFontSize(1.6)
+                        }}
+                        checked={toggleCheckBox}
+                        onPress={() => {
+                          setToggleCheckBox(!toggleCheckBox)
+                        }}
+                    />
+                      {/* <CheckBox
+                        tintColors={{ true: colors.themeblue, false: 'gray' }}
+                        onFillColor={colors.themeblue}
+                        boxType="circle"
+                        disabled={false}
+                        style={checkStyle}
+                        value={toggleCheckBox}
+                        onValueChange={(newValue) => setToggleCheckBox(newValue)}
+                      />
+                      <MyText
+                        size={responsiveFontSize(1.6)}
+                        fw={'bold'}
+                        color={'black'}
+                        decoration={'none'}
+                        textAlign={'left'}
+                        Label={'Se Souvenir de moi'}
+                      /> */}
+                      {/* <Text style={{color: '#000',  fontWeight: '500'}}>Se Souvenir de moi</Text> */}
                     </View>
                     <View style={{
-                      flexDirection:'column', alignItems:'center', justifyContent:'space-around', width:'100%',marginTop: 20
+                      flexDirection: 'row',
+                      alignItems: 'flex-end',
+                      width: '40%',
+                      justifyContent: 'flex-end'
                     }}>
-                    <Btn
-                        text="Se connecter"
-                        color={colors.themeblue}
-                        pSText={{
-                          fontWeight: 'bold',
-                          color: 'white'
+                      <TouchableOpacity
+
+                        onPress={() => {
+                          // navigation.navigate('forget');
+                          setshow(true)
                         }}
-                        textColor={colors.themeblue}
-                        call={() => callLoginFunc()}
-                        loader={null}
-                  />
-                    <TouchableOpacity style={{marginTop: 10}} onPress={() => navigation.navigate('signup')}>
-                      <Text style={{color: 'grey'}}>Créer un nouveau compte</Text>
-                    </TouchableOpacity>
+                        style={{}}>
+                        <MyText
+                          size={responsiveFontSize(1.6)}
+                          fw={'bold'}
+                          color={'black'}
+                          decoration={'underline'}
+                          textAlign={'right'}
+                          Label={'Mot de passe oublié ?'}
+                        />
+
+                      </TouchableOpacity>
                     </View>
+                  </View>
+                  <View style={{
+                    flexDirection: 'column', alignItems: 'center', justifyContent: 'space-around', width: '100%', marginTop: 20
+                  }}>
+                    <Btn
+                      text="Se connecter"
+                      color={colors.themeblue}
+                      pSText={{
+                        fontWeight: 'bold',
+                        color: 'white'
+                      }}
+                      textColor={colors.themeblue}
+                      call={() => callLoginFunc()}
+                      loader={null}
+                    />
+                    <TouchableOpacity style={{ marginTop: 10 }} onPress={() => navigation.navigate('signup')}>
+                    <MyText
+                          size={responsiveFontSize(1.6)}
+                          fw={'bold'}
+                          color={'grey'}
+                          decoration={'none'}
+                          textAlign={'right'}
+                          Label={'Créer un nouveau compte'}
+                        />
+                      {/* <Text style={{ color: 'grey' }}>Créer un nouveau compte</Text> */}
+                    </TouchableOpacity>
+                  </View>
                 </View>
               </View>
             </View>

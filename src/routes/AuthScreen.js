@@ -10,48 +10,91 @@ import ResetPassword from '../screens/auth/resetPassword/ResetPassword';
 import LoadingScreen from '../components/LoadingScreen';
 import SmsVerificationScreen from '../screens/auth/VerficationScreens/SmsVerificationScreen';
 import EmailVerificationScreen from '../screens/auth/VerficationScreens/EmailVerificationScreen';
+import OurRestuarant from '../screens/auth/OurRestuarant';
 const Stack = createNativeStackNavigator();
 export default function AuthScreens(navigation) {
+  const forSlide = ({ current, next, inverted, layouts: { screen } }) => {
+    const progress = Animated.add(
+      current.progress.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0, 1],
+        extrapolate: 'clamp',
+      }),
+      next
+        ? next.progress.interpolate({
+          inputRange: [0, 1],
+          outputRange: [0, 1],
+          extrapolate: 'clamp',
+        })
+        : 0
+    );
+
+    return {
+      cardStyle: {
+        transform: [
+          {
+            translateX: Animated.multiply(
+              progress.interpolate({
+                inputRange: [0, 1, 2],
+                outputRange: [
+                  screen.width, // Focused, but offscreen in the beginning
+                  0, // Fully focused
+                  screen.width * -0.3, // Fully unfocused
+                ],
+                extrapolate: 'clamp',
+              }),
+              inverted
+            ),
+          },
+        ],
+      },
+    };
+  };
   return (
     <>
-      <Stack.Screen name="walkthroughScreen">
+      <Stack.Screen options={{ cardStyleInterpolator: forSlide, headerShown: false }} name="walkthroughScreen">
         {props => {
           return <WalkthroughScreens {...props} />;
         }}
       </Stack.Screen>
-      <Stack.Screen name="login">
+      <Stack.Screen options={{ cardStyleInterpolator: forSlide, headerShown: false }} name="login">
         {props => {
           return <LoginScreens {...props} />;
         }}
       </Stack.Screen>
-      <Stack.Screen name="signup">
+      <Stack.Screen options={{ cardStyleInterpolator: forSlide, headerShown: false }} name="signup">
         {props => {
           return <SignUp {...props} />;
         }}
       </Stack.Screen>
-      <Stack.Screen name="forget">
+      <Stack.Screen options={{ cardStyleInterpolator: forSlide, headerShown: false }} name="forget">
         {props => {
           return <ForgetScreen {...props} />;
         }}
       </Stack.Screen>
-      <Stack.Screen name="resetpassword">
+      <Stack.Screen options={{ cardStyleInterpolator: forSlide, headerShown: false }} name="resetpassword">
         {props => {
           return <ResetPassword {...props} />;
         }}
       </Stack.Screen>
-      <Stack.Screen name="loading">
+      <Stack.Screen options={{ cardStyleInterpolator: forSlide, headerShown: false }} name="loading">
         {props => {
           return <LoadingScreen {...props} />;
         }}
       </Stack.Screen>
-      <Stack.Screen name="smsverification">
+      <Stack.Screen options={{ cardStyleInterpolator: forSlide, headerShown: false }} name="smsverification">
         {props => {
           return <SmsVerificationScreen {...props} />;
         }}
       </Stack.Screen>
-      <Stack.Screen name="emailverification">
+      <Stack.Screen options={{ cardStyleInterpolator: forSlide, headerShown: false }} name="emailverification">
         {props => {
           return <EmailVerificationScreen {...props} />;
+        }}
+      </Stack.Screen>
+      <Stack.Screen options={{ cardStyleInterpolator: forSlide, headerShown: false }} name="ourrest">
+        {props => {
+          return <OurRestuarant {...props} />;
         }}
       </Stack.Screen>
     </>

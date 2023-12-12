@@ -11,6 +11,6 @@ const colors = {
   btnColor: '#C12F2F',
   gray: '#808080',
   bgDefault:"#F2F2F2",
-  pale_yellow:"#eed202"
+  pale_yellow:"#F7BE00"
 };
 export default colors;

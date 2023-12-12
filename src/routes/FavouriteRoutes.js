@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { StyleSheet, Text, View } from 'react-native'
 import Favourite from "../../src/screens/favorite"
 import { createNativeStackNavigator } from '@react-navigation/native-stack';

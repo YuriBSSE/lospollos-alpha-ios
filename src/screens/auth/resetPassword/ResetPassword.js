@@ -30,7 +30,6 @@ import {
 } from 'react-native-responsive-dimensions';
 import InputField from '../../../components/InputField';
 import deviceInfo from 'react-native-device-info';
-import CheckBox from '@react-native-community/checkbox';
 import BackBtnHeader from '../../../components/BackBtnHeader';
 let {width, height} = Dimensions.get('window');
 
@@ -40,9 +39,9 @@ if (Platform.OS == 'ios' && width <= 550) {
   checkStyle.transform = [{scaleX: 0.7}, {scaleY: 0.7}];
 }
 const tablet = deviceInfo.isTablet();
-const ResetPassword = ({navigation}) => {
+const ResetPassword = ({navigation,route}) => {
   const password = useRef();
-
+  // console.log(route?.params?.text, "ASDADASDASDASD=====================")
   const [submit, setSubmit] = useState(false);
   const [isShowPass, setisShowPass] = useState(false);
 

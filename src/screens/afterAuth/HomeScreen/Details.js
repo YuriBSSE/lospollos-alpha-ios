@@ -16,6 +16,8 @@ import {
   TextInput,
   SafeAreaView,
   Platform,
+  PanResponder,
+  Animated
 } from 'react-native';
 import EyeIcon from 'react-native-vector-icons/Entypo';
 import Heading from '../../../components/Heading';
@@ -24,6 +26,7 @@ import * as Actions from '../../../store/actions/authAct';
 import LinearGradient from 'react-native-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import colors from '../../../assets/colors/colors';
+import {  useScrollToTop } from '@react-navigation/native';
 import {
   responsiveHeight,
   responsiveFontSize,
@@ -31,7 +34,7 @@ import {
 } from 'react-native-responsive-dimensions';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import deviceInfo from 'react-native-device-info';
-import CheckBox from '@react-native-community/checkbox';
+// import CheckBox from '@react-native-community/checkbox';
 import Toast from 'react-native-toast-message';
 let {width, height} = Dimensions.get('window');
 
@@ -43,7 +46,7 @@ if (Platform.OS == 'ios' && width <= 550) {
 const tablet = deviceInfo.isTablet();
 const Details = ({navigation}) => {
   const [value, onChangeValue] = useState(0);
-
+  const ref = React.useRef(null);
   const data = [
     {id: 1, image: require('../../../assets/image20.png')},
     {id: 2, image: require('../../../assets/image32.png')},
@@ -53,9 +56,54 @@ const Details = ({navigation}) => {
     {id: 6, image: require('../../../assets/image36.png')},
   ];
 
+
+
+  const pan = useRef(new Animated.ValueXY()).current;
+
+  const panResponder = useRef(
+    PanResponder.create({
+      onMoveShouldSetPanResponder: (e, g) => {
+        console.log(g)
+        if(g.vy > 0){
+          return  true
+        }else{
+          return  false
+        }
+   
+      },
+      onPanResponderGrant: () => {
+       
+        pan.setOffset({
+          x: pan.x._value,
+          y: pan.y._value
+        });
+      },
+      onPanResponderMove: Animated.event(
+        [
+          null,
+          { dx: pan.x, dy: pan.y }
+        ]
+      ),
+      onPanResponderRelease: (e,state) => {
+        // console.log(state,"====")
+        if(Number(state.dy)>200){
+          navigation.goBack()
+          // alert("dd")
+        }else{
+          pan.setValue({x:0,y:0})
+        }
+        pan.flattenOffset();
+       
+
+      }
+    })
+  ).current;
+
+ 
+
   return (
     <View style={StyleSheet.absoluteFill}>
-      <ScrollView style={{backgroundColor: colors.themeblue}}>
+      <View style={{backgroundColor: colors.themeblue}}>
         <View
           style={{
             flexDirection: 'column',
@@ -86,7 +134,7 @@ const Details = ({navigation}) => {
               />
             </TouchableOpacity>
           </View>
-          <View
+          <Animated.View
             style={{
               width: '20%',
               height: 5,
@@ -94,16 +142,23 @@ const Details = ({navigation}) => {
               backgroundColor: 'white',
               alignSelf: 'center',
               bottom: 10,
+              opacity:pan.y.interpolate({inputRange:[0,200],outputRange:[1,0]}),
+              transform: [ { translateY: pan.y.interpolate({inputRange:[0,200],outputRange:[0,200]}) }]
             }}
+            {...panResponder.panHandlers}
           />
-          <View
+          <Animated.View
             style={{
               height: responsiveHeight(90),
               width: '100%',
               backgroundColor: 'white',
               borderTopLeftRadius: 25,
               borderTopRightRadius: 25,
-            }}>
+              opacity:pan.y.interpolate({inputRange:[0,200],outputRange:[1,0]}),
+              transform: [ { translateY: pan.y.interpolate({inputRange:[0,200],outputRange:[0,200]}) }]
+            }}
+            {...panResponder.panHandlers}
+            >
             <View
               style={{
                 width: '78%',
@@ -121,7 +176,7 @@ const Details = ({navigation}) => {
                 shadowOpacity: 0.25,
                 shadowRadius: 3.84,
 
-                elevation: 9,
+            
               }}>
               <Image
                 // resizeMode='contain'
@@ -140,7 +195,7 @@ const Details = ({navigation}) => {
                   shadowOpacity: 0.25,
                   shadowRadius: 3.84,
 
-                  elevation: 5,
+                 
                 }}
                 source={require('../../../assets/large.png')}
               />
@@ -277,7 +332,7 @@ const Details = ({navigation}) => {
                 <Text
                   style={{
                     color: 'grey',
-                    height: responsiveFontSize(12),
+                    height: responsiveFontSize(15),
                     // backgroundColor: 'red',
                   }}
                   numberOfLines={6}>
@@ -367,9 +422,9 @@ const Details = ({navigation}) => {
                 />
               </View>
             </View>
-          </View>
+          </Animated.View>
         </View>
-      </ScrollView>
+      </View>
     </View>
   );
 };

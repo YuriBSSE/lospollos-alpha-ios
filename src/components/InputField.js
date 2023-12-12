@@ -33,6 +33,7 @@ const InputField = ({
   value,
   columns,
   onSubmitEditing,
+  MyBorderColor,
   smallCaps=false,
   inputType = 'default',
   rightIcon = () => {
@@ -45,7 +46,7 @@ const InputField = ({
   editable= true
 }) => {
   return (
-    <View style={{...styles.container,alignItems:columns?"flex-start":"center"}}>
+    <View style={{...styles.container,alignItems:columns?"flex-start":"center", borderColor: MyBorderColor && MyBorderColor }}>
       {icon ? <View style={{position: 'absolute', left: 5,marginHorizontal:responsiveWidth(1),marginTop:columns?responsiveFontSize(1):0}}>{icon()}</View> :null}
       {inputType !== 'password' ? (
         <>

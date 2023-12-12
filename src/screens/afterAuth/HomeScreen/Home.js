@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 // @ts-nocheck
 import {
   View,
@@ -11,7 +12,7 @@ import {
   ImageBackground,
   Image,
 } from 'react-native';
-import React, {useState,useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 import colors from '../../../assets/colors/colors';
 import BackBtnHeader from '../../../components/BackBtnHeader';
 import {responsiveScreenFontSize} from 'react-native-responsive-dimensions';
@@ -19,8 +20,16 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import LinearGradient from 'react-native-linear-gradient';
 import HomeIcon from 'react-native-vector-icons/Ionicons';
-
+import ItemDetailModal from '../../Modal/ItemDetailModal';
+import Items from './Child/Items';
 export default function Home({navigation}) {
+  const [show, setshow] = useState(false);
+
+  const func = x => {
+    // console.log(x);
+    setshow(false);
+  };
+
   const data = [
     {id: 1, name: 'Entrées'},
     {id: 2, name: 'Plats'},
@@ -67,7 +76,7 @@ export default function Home({navigation}) {
   ];
 
   const [onTouch, onChangeOnTouch] = useState('menu');
-  const [like, onChangeLike] = useState(false);
+  const [like, onChangeLike] = useState(true);
   const [fields, setFields] = useState({
     search: '',
   });
@@ -81,14 +90,20 @@ export default function Home({navigation}) {
     });
   }
 
-
+  function renderComponent({item, index}) {
+    return <Items data={item} key={index} openModal={setshow} />;
+  }
 
   return (
     <View style={{flex: 1}}>
-      <StatusBar
-        backgroundColor={colors.themeblue}
-        //   barStyle='light-content'
-      />
+      <StatusBar backgroundColor={colors.themeblue} />
+      {show && (
+        <ItemDetailModal
+          ModalState={show}
+          ChangeModalState={setshow}
+          callBack={func}
+        />
+      )}
       <View
         style={{
           height: responsiveScreenFontSize(10),
@@ -98,7 +113,7 @@ export default function Home({navigation}) {
           justifyContent: 'flex-end',
           flexDirection: 'row',
         }}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('notification')}>
           <MaterialCommunityIcons
             name="bell-outline"
             size={responsiveScreenFontSize(3)}
@@ -124,7 +139,6 @@ export default function Home({navigation}) {
           },
           shadowOpacity: 0.25,
           shadowRadius: 3.84,
-
           elevation: 5,
           position: 'absolute',
           top: responsiveScreenFontSize(6),
@@ -134,7 +148,6 @@ export default function Home({navigation}) {
             position: 'relative',
             flexDirection: 'row',
             alignItems: 'center',
-            
             top: responsiveScreenFontSize(1),
             width: '90%',
             alignSelf: 'center',
@@ -152,7 +165,7 @@ export default function Home({navigation}) {
             placeholderTextColor={'grey'}
             onChangeText={v => getValue('search', v)}
             multiline={false}
-            style={{color: 'grey', width: '80%', fontWeight:'bold'}}
+            style={{color: 'grey', width: '80%', fontWeight: 'bold'}}
             placeholder={'Plat, ingrédient, boisson ...'}
           />
         </View>
@@ -195,7 +208,6 @@ export default function Home({navigation}) {
                     style={{
                       backgroundColor:
                         onTouch == item.name ? colors.themeblue : '#BDBDBD',
-                      //   padding: responsiveScreenFontSize(2),
                       borderRadius: responsiveScreenFontSize(3),
                       marginHorizontal: responsiveScreenFontSize(0.8),
                       width: 100,
@@ -231,138 +243,7 @@ export default function Home({navigation}) {
             ListFooterComponent={<View style={{width: 100}} />}
             showsHorizontalScrollIndicator={false}
             keyExtractor={(item, i) => i.toString()}
-            renderItem={({item, index}) => {
-              return (
-                <TouchableOpacity
-                  onPress={() => navigation.navigate('details')}
-                  style={{
-                    shadowColor: '#000',
-                    shadowOffset: {
-                      width: 0,
-                      height: 2,
-                    },
-                    shadowOpacity: 0.25,
-                    shadowRadius: 3.84,
-                    backgroundColor: 'white',
-                    elevation: 5,
-                    height: responsiveScreenFontSize(25),
-                    borderRadius: responsiveScreenFontSize(3),
-                    width: 170,
-                    marginHorizontal: 10,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}>
-                  <ImageBackground
-                    resizeMode="stretch"
-                    style={{width: 170, height: responsiveScreenFontSize(25)}}
-                    source={require('../../../assets/menu.png')}>
-                    <View
-                      style={{
-                        position: 'absolute',
-
-                        width: 170,
-                        height: responsiveScreenFontSize(25),
-
-                        opacity: 0.35,
-                        backgroundColor: 'black',
-                        borderRadius: responsiveScreenFontSize(3),
-                      }}></View>
-                    <View
-                      style={{
-                        position: 'absolute',
-                        bottom: 0,
-                        width: 170,
-                        height: responsiveScreenFontSize(9),
-
-                        borderBottomLeftRadius: 12,
-                        borderBottomRightRadius: 12,
-                      }}>
-                      <View
-                        style={{
-                          flexDirection: 'column',
-                          justifyContent: 'space-between',
-                          alignItems: 'flex-start',
-                          paddingHorizontal: responsiveScreenFontSize(1),
-                        }}>
-                        <Text
-                          style={{
-                            textAlign: 'left',
-                            fontSize: responsiveScreenFontSize(1.8),
-                            fontWeight: '800',
-                            color: 'white',
-                          }}
-                          numberOfLines={2}>
-                          {item.title}
-                        </Text>
-                        <Text
-                          style={{
-                            textAlign: 'left',
-                            fontSize: responsiveScreenFontSize(1.5),
-                            fontWeight: '500',
-                            color: 'white',
-                          }}>
-                          {item.des}
-                        </Text>
-                      </View>
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          justifyContent: 'space-between',
-                          alignItems: 'flex-start',
-                          paddingHorizontal: responsiveScreenFontSize(1),
-                        }}>
-                        <View
-                          style={{
-                            flexDirection: 'row',
-                            justifyContent: 'flex-start',
-                          }}>
-                          <Text
-                            style={{
-                              textAlign: 'left',
-                              fontSize: responsiveScreenFontSize(2),
-                              fontWeight: '800',
-                              color: 'yellow',
-                            }}
-                            numberOfLines={2}>
-                            100
-                          </Text>
-                          <Text
-                            style={{
-                              textAlign: 'left',
-                              fontSize: responsiveScreenFontSize(2),
-                              fontWeight: '500',
-                              color: 'yellow',
-                            }}>
-                            {' '}
-                            €{' '}
-                          </Text>
-                        </View>
-                        <View>
-                          <TouchableOpacity
-                            onPress={() => {
-                              onChangeLike(!like);
-                            }}>
-                            {like ? (
-                              <HomeIcon
-                                name="heart-outline"
-                                size={22}
-                                color={'yellow'}
-                              />
-                            ) : (
-                              <HomeIcon
-                                name="heart"
-                                size={22}
-                                color={'yellow'}
-                              />
-                            )}
-                          </TouchableOpacity>
-                        </View>
-                      </View>
-                    </View>
-                  </ImageBackground>
-                </TouchableOpacity>
-              );
-            }}
+            renderItem={renderComponent}
           />
         </View>
         <View style={{height: responsiveScreenFontSize(30)}}>
@@ -387,138 +268,7 @@ export default function Home({navigation}) {
             ListFooterComponent={<View style={{width: 100}} />}
             showsHorizontalScrollIndicator={false}
             keyExtractor={(item, i) => i.toString()}
-            renderItem={({item, index}) => {
-              return (
-                <TouchableOpacity
-                  onPress={() => navigation.navigate('details')}
-                  style={{
-                    shadowColor: '#000',
-                    shadowOffset: {
-                      width: 0,
-                      height: 2,
-                    },
-                    shadowOpacity: 0.25,
-                    shadowRadius: 3.84,
-                    backgroundColor: 'white',
-                    elevation: 5,
-                    height: responsiveScreenFontSize(25),
-                    borderRadius: responsiveScreenFontSize(3),
-                    width: 170,
-                    marginHorizontal: 10,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}>
-                  <ImageBackground
-                    resizeMode="stretch"
-                    style={{width: 170, height: responsiveScreenFontSize(25)}}
-                    source={require('../../../assets/Photo.png')}>
-                    <View
-                      style={{
-                        position: 'absolute',
-
-                        width: 170,
-                        height: responsiveScreenFontSize(25),
-
-                        opacity: 0.35,
-                        backgroundColor: 'black',
-                        borderRadius: responsiveScreenFontSize(2),
-                      }}></View>
-                    <View
-                      style={{
-                        position: 'absolute',
-                        bottom: 0,
-                        width: 170,
-                        height: responsiveScreenFontSize(9),
-
-                        borderBottomLeftRadius: 12,
-                        borderBottomRightRadius: 12,
-                      }}>
-                      <View
-                        style={{
-                          flexDirection: 'column',
-                          justifyContent: 'space-between',
-                          alignItems: 'flex-start',
-                          paddingHorizontal: responsiveScreenFontSize(1),
-                        }}>
-                        <Text
-                          style={{
-                            textAlign: 'left',
-                            fontSize: responsiveScreenFontSize(1.8),
-                            fontWeight: '800',
-                            color: 'white',
-                          }}
-                          numberOfLines={2}>
-                          {item.title}
-                        </Text>
-                        <Text
-                          style={{
-                            textAlign: 'left',
-                            fontSize: responsiveScreenFontSize(1.5),
-                            fontWeight: '500',
-                            color: 'white',
-                          }}>
-                          {item.des}
-                        </Text>
-                      </View>
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          justifyContent: 'space-between',
-                          alignItems: 'flex-start',
-                          paddingHorizontal: responsiveScreenFontSize(1),
-                        }}>
-                        <View
-                          style={{
-                            flexDirection: 'row',
-                            justifyContent: 'flex-start',
-                          }}>
-                          <Text
-                            style={{
-                              textAlign: 'left',
-                              fontSize: responsiveScreenFontSize(2),
-                              fontWeight: '800',
-                              color: 'yellow',
-                            }}
-                            numberOfLines={2}>
-                            100
-                          </Text>
-                          <Text
-                            style={{
-                              textAlign: 'left',
-                              fontSize: responsiveScreenFontSize(2),
-                              fontWeight: '500',
-                              color: 'yellow',
-                            }}>
-                            {' '}
-                            €{' '}
-                          </Text>
-                        </View>
-                        <View>
-                          <TouchableOpacity
-                            onPress={() => {
-                              onChangeLike(!like);
-                            }}>
-                            {like ? (
-                              <HomeIcon
-                                name="heart-outline"
-                                size={22}
-                                color={'yellow'}
-                              />
-                            ) : (
-                              <HomeIcon
-                                name="heart"
-                                size={22}
-                                color={'yellow'}
-                              />
-                            )}
-                          </TouchableOpacity>
-                        </View>
-                      </View>
-                    </View>
-                  </ImageBackground>
-                </TouchableOpacity>
-              );
-            }}
+            renderItem={renderComponent}
           />
         </View>
         <View style={{height: responsiveScreenFontSize(30)}}>
@@ -543,137 +293,7 @@ export default function Home({navigation}) {
             ListFooterComponent={<View style={{width: 100}} />}
             showsHorizontalScrollIndicator={false}
             keyExtractor={(item, i) => i.toString()}
-            renderItem={({item, index}) => {
-              return (
-                <TouchableOpacity
-                  style={{
-                    shadowColor: '#000',
-                    shadowOffset: {
-                      width: 0,
-                      height: 2,
-                    },
-                    shadowOpacity: 0.25,
-                    shadowRadius: 3.84,
-                    backgroundColor: 'white',
-                    elevation: 5,
-                    height: responsiveScreenFontSize(25),
-                    borderRadius: responsiveScreenFontSize(3),
-                    width: 170,
-                    marginHorizontal: 10,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}>
-                  <ImageBackground
-                    resizeMode="stretch"
-                    style={{width: 170, height: responsiveScreenFontSize(25)}}
-                    source={require('../../../assets/Photo1.png')}>
-                    <View
-                      style={{
-                        position: 'absolute',
-
-                        width: 170,
-                        height: responsiveScreenFontSize(25),
-
-                        opacity: 0.35,
-                        backgroundColor: 'black',
-                        borderRadius: responsiveScreenFontSize(2),
-                      }}></View>
-                    <View
-                      style={{
-                        position: 'absolute',
-                        bottom: 0,
-                        width: 170,
-                        height: responsiveScreenFontSize(9),
-
-                        borderBottomLeftRadius: 12,
-                        borderBottomRightRadius: 12,
-                      }}>
-                      <View
-                        style={{
-                          flexDirection: 'column',
-                          justifyContent: 'space-between',
-                          alignItems: 'flex-start',
-                          paddingHorizontal: responsiveScreenFontSize(1),
-                        }}>
-                        <Text
-                          style={{
-                            textAlign: 'left',
-                            fontSize: responsiveScreenFontSize(1.8),
-                            fontWeight: '800',
-                            color: 'white',
-                          }}
-                          numberOfLines={2}>
-                          {item.title}
-                        </Text>
-                        <Text
-                          style={{
-                            textAlign: 'left',
-                            fontSize: responsiveScreenFontSize(1.5),
-                            fontWeight: '500',
-                            color: 'white',
-                          }}>
-                          {item.des}
-                        </Text>
-                      </View>
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          justifyContent: 'space-between',
-                          alignItems: 'flex-start',
-                          paddingHorizontal: responsiveScreenFontSize(1),
-                        }}>
-                        <View
-                          style={{
-                            flexDirection: 'row',
-                            justifyContent: 'flex-start',
-                          }}>
-                          <Text
-                            style={{
-                              textAlign: 'left',
-                              fontSize: responsiveScreenFontSize(2),
-                              fontWeight: '800',
-                              color: 'yellow',
-                            }}
-                            numberOfLines={2}>
-                            100
-                          </Text>
-                          <Text
-                            style={{
-                              textAlign: 'left',
-                              fontSize: responsiveScreenFontSize(2),
-                              fontWeight: '500',
-                              color: 'yellow',
-                            }}>
-                            {' '}
-                            €{' '}
-                          </Text>
-                        </View>
-                        <View>
-                          <TouchableOpacity
-                            onPress={() => {
-                              onChangeLike(!like);
-                            }}>
-                            {like ? (
-                              <HomeIcon
-                                name="heart-outline"
-                                size={22}
-                                color={'yellow'}
-                              />
-                            ) : (
-                              <HomeIcon
-                                name="heart"
-                                size={22}
-                                color={'yellow'}
-                              />
-                            )}
-                          </TouchableOpacity>
-                        </View>
-                      </View>
-                    </View>
-                  </ImageBackground>
-                </TouchableOpacity>
-              );
-            }}
+            renderItem={renderComponent}
           />
         </View>
         <View style={{height: responsiveScreenFontSize(30)}}>
@@ -698,137 +318,7 @@ export default function Home({navigation}) {
             ListFooterComponent={<View style={{width: 100}} />}
             showsHorizontalScrollIndicator={false}
             keyExtractor={(item, i) => i.toString()}
-            renderItem={({item, index}) => {
-              return (
-                <TouchableOpacity
-                  style={{
-                    shadowColor: '#000',
-                    shadowOffset: {
-                      width: 0,
-                      height: 2,
-                    },
-                    shadowOpacity: 0.25,
-                    shadowRadius: 3.84,
-                    backgroundColor: 'white',
-                    elevation: 5,
-                    height: responsiveScreenFontSize(25),
-                    borderRadius: responsiveScreenFontSize(3),
-                    width: 170,
-                    marginHorizontal: 10,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}>
-                  <ImageBackground
-                    resizeMode="stretch"
-                    style={{width: 170, height: responsiveScreenFontSize(25)}}
-                    source={require('../../../assets/Entrées.png')}>
-                    <View
-                      style={{
-                        position: 'absolute',
-
-                        width: 170,
-                        height: responsiveScreenFontSize(25),
-
-                        opacity: 0.35,
-                        backgroundColor: 'black',
-                        borderRadius: responsiveScreenFontSize(2),
-                      }}></View>
-                    <View
-                      style={{
-                        position: 'absolute',
-                        bottom: 0,
-                        width: 170,
-                        height: responsiveScreenFontSize(9),
-
-                        borderBottomLeftRadius: 12,
-                        borderBottomRightRadius: 12,
-                      }}>
-                      <View
-                        style={{
-                          flexDirection: 'column',
-                          justifyContent: 'space-between',
-                          alignItems: 'flex-start',
-                          paddingHorizontal: responsiveScreenFontSize(1),
-                        }}>
-                        <Text
-                          style={{
-                            textAlign: 'left',
-                            fontSize: responsiveScreenFontSize(1.8),
-                            fontWeight: '800',
-                            color: 'white',
-                          }}
-                          numberOfLines={2}>
-                          {item.title}
-                        </Text>
-                        <Text
-                          style={{
-                            textAlign: 'left',
-                            fontSize: responsiveScreenFontSize(1.5),
-                            fontWeight: '500',
-                            color: 'white',
-                          }}>
-                          {item.des}
-                        </Text>
-                      </View>
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          justifyContent: 'space-between',
-                          alignItems: 'flex-start',
-                          paddingHorizontal: responsiveScreenFontSize(1),
-                        }}>
-                        <View
-                          style={{
-                            flexDirection: 'row',
-                            justifyContent: 'flex-start',
-                          }}>
-                          <Text
-                            style={{
-                              textAlign: 'left',
-                              fontSize: responsiveScreenFontSize(2),
-                              fontWeight: '800',
-                              color: 'yellow',
-                            }}
-                            numberOfLines={2}>
-                            100
-                          </Text>
-                          <Text
-                            style={{
-                              textAlign: 'left',
-                              fontSize: responsiveScreenFontSize(2),
-                              fontWeight: '500',
-                              color: 'yellow',
-                            }}>
-                            {' '}
-                            €{' '}
-                          </Text>
-                        </View>
-                        <View>
-                          <TouchableOpacity
-                            onPress={() => {
-                              onChangeLike(!like);
-                            }}>
-                            {like ? (
-                              <HomeIcon
-                                name="heart-outline"
-                                size={22}
-                                color={'yellow'}
-                              />
-                            ) : (
-                              <HomeIcon
-                                name="heart"
-                                size={22}
-                                color={'yellow'}
-                              />
-                            )}
-                          </TouchableOpacity>
-                        </View>
-                      </View>
-                    </View>
-                  </ImageBackground>
-                </TouchableOpacity>
-              );
-            }}
+            renderItem={renderComponent}
           />
         </View>
         <View style={{height: responsiveScreenFontSize(10)}} />

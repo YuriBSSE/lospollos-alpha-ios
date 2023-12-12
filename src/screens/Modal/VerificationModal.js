@@ -34,7 +34,7 @@ import colors from '../../assets/colors/colors';
 
 const tablet = deviceInfo.isTablet();
 
-const Verfication = ({ModalState, ChangeModalState, callBack}) => {
+const Verfication = ({ModalState, ChangeModalState, callBack, navigation}) => {
   const [active, onChangeActive] = useState('');
 
   const activeFunction = a => {
@@ -138,8 +138,8 @@ const Verfication = ({ModalState, ChangeModalState, callBack}) => {
                   <Image
                     source={
                       active == 'first'
-                        ? require('../../assets/refresh.png')
-                        : require('../../assets/refreshBlack.png')
+                      ? require('../../assets/letter.png')
+                      : require('../../assets/letterblack.png')
                     }
                   />
                   <Heading
@@ -148,7 +148,7 @@ const Verfication = ({ModalState, ChangeModalState, callBack}) => {
                     fontsize={responsiveFontSize(1.2)}
                     align={'center'}
                     fontWeight={'500'}
-                    text="Renvoyer un code"
+                    text="Envoyer un e-mail"
                   />
                   <Heading
                     width={'90%'}
@@ -156,7 +156,7 @@ const Verfication = ({ModalState, ChangeModalState, callBack}) => {
                     fontsize={responsiveFontSize(1.2)}
                     align={'center'}
                     fontWeight={'400'}
-                    text="Recevez un nouveau code de validation"
+                    text="Recevez un e-mail contenant un code"
                   />
                 </View>
               </TouchableOpacity>
@@ -221,7 +221,7 @@ const Verfication = ({ModalState, ChangeModalState, callBack}) => {
               </TouchableOpacity>
             </View>
             <View>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={()=> navigation.navigate('ourrest')} >
               <Text
                           style={{
                             fontWeight: '700',

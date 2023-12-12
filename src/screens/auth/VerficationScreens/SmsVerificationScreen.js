@@ -18,6 +18,7 @@ import {
   Platform,
   ImageBackground,
   StatusBar,
+  Keyboard
 } from 'react-native';
 import EyeIcon from 'react-native-vector-icons/Entypo';
 import Heading from '../../../components/Heading';
@@ -32,9 +33,11 @@ import {
 } from 'react-native-responsive-dimensions';
 import InputField from '../../../components/InputField';
 import deviceInfo from 'react-native-device-info';
-import CheckBox from '@react-native-community/checkbox';
 import BackBtnHeader from '../../../components/BackBtnHeader';
 import Verfication from '../../Modal/VerificationModal';
+import * as Actions from '../../../store/actions/authAct';
+import { connect } from 'react-redux';
+
 let {width, height} = Dimensions.get('window');
 
 const checkStyle = {};
@@ -43,10 +46,11 @@ if (Platform.OS == 'ios' && width <= 550) {
   checkStyle.transform = [{scaleX: 0.7}, {scaleY: 0.7}];
 }
 const tablet = deviceInfo.isTablet();
-const SmsVerificationScreen = ({navigation}) => {
+const SmsVerificationScreen = ({navigation, loginAct,route}) => {
   const password = useRef();
-
+  console.log(route?.params?.forgot, 'route');
   const [submit, setSubmit] = useState(false);
+  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const [isShowPass, setisShowPass] = useState(false);
 
   const [isShowPass2, setisShowPass2] = useState(false);
@@ -66,6 +70,28 @@ const SmsVerificationScreen = ({navigation}) => {
   //     <LoadingScreen />
   //   )
   // }
+
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      () => {
+        setKeyboardVisible(true); // or some other action
+      }
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => {
+        setKeyboardVisible(false); // or some other action
+      }
+    );
+
+    return () => {
+      keyboardDidHideListener.remove();
+      keyboardDidShowListener.remove();
+    };
+  }, []);
+
 
   const func = x => {
     console.log(x);
@@ -87,7 +113,7 @@ const SmsVerificationScreen = ({navigation}) => {
     });
   }
   return (
-    <View style={StyleSheet.absoluteFill}>
+    <View style={[StyleSheet.absoluteFill, {backgroundColor: colors.themeblue}]}>
        
     
       <StatusBar
@@ -99,6 +125,7 @@ const SmsVerificationScreen = ({navigation}) => {
         ModalState={show}
         ChangeModalState={setshow}
         callBack={func}
+        navigation={navigation}
       />
         <View
           style={{ 
@@ -120,7 +147,7 @@ const SmsVerificationScreen = ({navigation}) => {
               call={() => navigation.goBack()}
             />
           </View>
-          <View style={{height: responsiveHeight(20)}} />
+          <View style={{height: responsiveHeight(12)}} />
 
           {/* <View
             style={{
@@ -134,7 +161,7 @@ const SmsVerificationScreen = ({navigation}) => {
           /> */}
           <View
             style={{
-              height: responsiveHeight(80),
+              height: responsiveHeight(88),
               width: '100%',
               backgroundColor: 'white',
               borderTopLeftRadius: 25,
@@ -193,12 +220,19 @@ const SmsVerificationScreen = ({navigation}) => {
         <OTPInputView
           style={{width: '60%', height: height * 0.1, alignSelf: 'center'}}
           pinCount={4}
-          autoFocusOnLoad
+          // autoFocusOnLoad
+          autoFocusOnLoad={false}
           codeInputFieldStyle={styles.underlineStyleBase}
           codeInputHighlightStyle={styles.underlineStyleHighLighted}
           onCodeFilled={code => {
             console.log(`Code is ${code}, you are good to go!`);
-            navigation.navigate('resetpassword')
+            // navigation.navigate('resetpassword')
+            if(route?.params?.forgot){
+              navigation.navigate('resetpassword')
+            }else{
+              loginAct('ahsanmuneer81@gmail.com', '1234567')
+            }
+            // loginAct('ahsanmuneer81@gmail.com', '1234567')
           }}
         />
         <View
@@ -230,7 +264,8 @@ const SmsVerificationScreen = ({navigation}) => {
     </View>
   );
 };
-export default SmsVerificationScreen;
+
+export default connect(null, Actions)(SmsVerificationScreen);
 
 const styles = StyleSheet.create({
   container: {

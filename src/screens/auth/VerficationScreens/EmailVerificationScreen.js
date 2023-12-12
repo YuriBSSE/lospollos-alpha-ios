@@ -1,6 +1,6 @@
 // @ts-nocheck
 
-import React, {useState, useEffect, useMemo, useContext, useRef} from 'react';
+import React, { useState, useEffect, useMemo, useContext, useRef } from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {
   Text,
@@ -17,6 +17,7 @@ import {
   SafeAreaView,
   Platform,
   StatusBar,
+  Keyboard,
   ImageBackground
 } from 'react-native';
 import EyeIcon from 'react-native-vector-icons/Entypo';
@@ -32,21 +33,25 @@ import {
 import OTPInputView from '@twotalltotems/react-native-otp-input';
 import InputField from '../../../components/InputField';
 import deviceInfo from 'react-native-device-info';
-import CheckBox from '@react-native-community/checkbox';
+// import CheckBox from '@react-native-community/checkbox';
 import BackBtnHeader from '../../../components/BackBtnHeader';
 import Verfication from '../../Modal/VerificationModal';
-let {width, height} = Dimensions.get('window');
+import * as Actions from '../../../store/actions/authAct';
+import { connect } from 'react-redux';
+import SignUpVerficationModal from '../../Modal/SignUpVerficationModal';
+let { width, height } = Dimensions.get('window');
 
 const checkStyle = {};
 
 if (Platform.OS == 'ios' && width <= 550) {
-  checkStyle.transform = [{scaleX: 0.7}, {scaleY: 0.7}];
+  checkStyle.transform = [{ scaleX: 0.7 }, { scaleY: 0.7 }];
 }
 const tablet = deviceInfo.isTablet();
-const EmailVerificationScreen = ({navigation}) => {
+const EmailVerificationScreen = ({ navigation, loginAct, route }) => {
   const password = useRef();
-
+  console.log(route?.params?.forgot, 'route');
   const [submit, setSubmit] = useState(false);
+  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const [isShowPass, setisShowPass] = useState(false);
 
   const [isShowPass2, setisShowPass2] = useState(false);
@@ -60,12 +65,34 @@ const EmailVerificationScreen = ({navigation}) => {
 
   const [eye, seteye] = React.useState(true);
   const [show, setshow] = useState(false);
-
+  const [show1, setshow1] = useState(true);
+  const inputRef = useRef();
   // if(true){
   //   return(
   //     <LoadingScreen />
   //   )
   // }
+
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      () => {
+        setKeyboardVisible(true); // or some other action
+      }
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => {
+        setKeyboardVisible(false); // or some other action
+      }
+    );
+
+    return () => {
+      keyboardDidHideListener.remove();
+      keyboardDidShowListener.remove();
+    };
+  }, []);
 
   const func = x => {
     console.log(x);
@@ -78,6 +105,20 @@ const EmailVerificationScreen = ({navigation}) => {
       navigation.navigate('emailverification')
     }
   };
+
+  const funcOther = x => {
+    console.log(x, "x");
+    if(x == 'sms'){
+      // setshow1(false)
+      navigation.navigate('smsverification')
+    }
+    if(x == 'email'){
+      setshow1(false)
+      // navigation.navigate('smsverification')
+    }
+    // setshow1(false)
+  };
+
   function getValue(k, v) {
     setFields(pS => {
       return {
@@ -87,42 +128,51 @@ const EmailVerificationScreen = ({navigation}) => {
     });
   }
   return (
-    <View style={StyleSheet.absoluteFill}>
-       
-    
+    <View style={[StyleSheet.absoluteFill, { backgroundColor: colors.themeblue }]}>
+      {
+        show1 &&
+        <SignUpVerficationModal
+          ModalState={show1}
+          ChangeModalState={setshow1}
+          callBack={funcOther}
+          navigation={navigation}
+        />
+      }
+
       <StatusBar
-          backgroundColor={colors.themeblue}
-          barStyle='dark-content'
-          />
-      <ScrollView style={{backgroundColor: colors.themeblue}}>
+        backgroundColor={colors.themeblue}
+        barStyle='dark-content'
+      />
+      {/* <ScrollView style={{backgroundColor: colors.themeblue}}> */}
       <Verfication
         ModalState={show}
         ChangeModalState={setshow}
         callBack={func}
+        navigation={navigation}
       />
+      <View
+        style={{
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'space-around',
+        }}>
         <View
-          style={{ 
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'space-around',
+          style={{
+            top: responsiveFontSize(4),
+            height: 50,
+            position: 'absolute',
+            width: '100%',
           }}>
-          <View
-            style={{
-              top: responsiveFontSize(4),
-              height: 50,
-              position: 'absolute',
-              width: '100%',
-            }}>
-            <BackBtnHeader
-              left={true}
-              text={'Retour'} 
-              odd={true}
-              call={() => navigation.goBack()}
-            />
-          </View>
-          <View style={{height: responsiveHeight(20)}} />
+          <BackBtnHeader
+            left={true}
+            text={'Retour'}
+            odd={true}
+            call={() => navigation.goBack()}
+          />
+        </View>
+        <View style={{ height: responsiveHeight(12) }} />
 
-          {/* <View
+        {/* <View
             style={{
               width: '20%',
               height: 5,
@@ -132,106 +182,113 @@ const EmailVerificationScreen = ({navigation}) => {
               bottom: 10,
             }}
           /> */}
+        <View
+          style={{
+            height: responsiveHeight(88),
+            width: '100%',
+            backgroundColor: 'white',
+            borderTopLeftRadius: 25,
+            borderTopRightRadius: 25,
+          }}>
+
           <View
             style={{
-              height: responsiveHeight(80),
-              width: '100%',
-              backgroundColor: 'white',
-              borderTopLeftRadius: 25,
-              borderTopRightRadius: 25,
+              alignSelf: 'center',
+              top: 20
             }}>
-
-        <View
-          style={{
-            alignSelf: 'center',
-            top: 20
-          }}>
-          <TouchableOpacity
+            <TouchableOpacity
             // onPress={() => navigation.navigate('resetpassword')}
             >
-            <ImageBackground
-              resizeMode="cover"
-              style={{
-                height: 250,
-                width: 200,
-              }}
-              source={require('../../../assets/email.png')}>
-              <Image
-                resizeMode="contain"
-                style={{height: 200, width: 200}}
-                source={require('../../../assets/bluremail.png')}
-              />
-            </ImageBackground>
-          </TouchableOpacity>
-        </View>
-        <View
-          style={{
-            height: 180,
-            width: '100%',
-            flexDirection: 'column',
-            justifyContent: 'space-around',
-            alignItems: 'center',
-            alignSelf: 'center',
-          }}>
-          <Heading
-            fontsize={responsiveFontSize(2)}
-            width={'70%'}
-            color={'black'}
-            align={'center'}
-            fontWeight={'800'}
-            text="Un code de réinitialisation de mot de passe a été envoyé à l’adresse mail j••••••@o••••••.fr"
-          />
-          <Heading
-            fontsize={responsiveFontSize(1.5)}
-            width={'60%'}
-            color={'grey'}
-            align={'center'}
-            // fontWeight={'00'}
-            text="Saisissez le code ci-dessous pour continuer."
-          />
-        </View>
-        <OTPInputView
-          style={{width: '60%', height: height * 0.1, alignSelf: 'center'}}
-          pinCount={4}
-          autoFocusOnLoad
-          codeInputFieldStyle={styles.underlineStyleBase}
-          codeInputHighlightStyle={styles.underlineStyleHighLighted}
-          onCodeFilled={code => {
-            console.log(`Code is ${code}, you are good to go!`);
-            navigation.navigate('resetpassword')
-          }}
-        />
-        <View
-          style={{
-            height: 40,
-            width: '100%',
-            justifyContent: 'flex-end',
-          }}>
-          <TouchableOpacity
-            onPress={() => {
-              setshow(true);
+              <ImageBackground
+                resizeMode="cover"
+                style={{
+                  height: 250,
+                  width: 200,
+                }}
+                source={require('../../../assets/email.png')}>
+                <Image
+                  resizeMode="contain"
+                  style={{ height: 200, width: 200 }}
+                  source={require('../../../assets/bluremail.png')}
+                />
+              </ImageBackground>
+            </TouchableOpacity>
+          </View>
+          <View
+            style={{
+              height: 180,
+              width: '100%',
+              flexDirection: 'column',
+              justifyContent: 'space-around',
+              alignItems: 'center',
+              alignSelf: 'center',
+            }}>
+            <Heading
+              fontsize={responsiveFontSize(2)}
+              width={'70%'}
+              color={'black'}
+              align={'center'}
+              fontWeight={'bold'}
+              text="Un code de validation vous a été envoyé par e-mail"
+            />
+            <Heading
+              fontsize={responsiveFontSize(1.5)}
+              width={'60%'}
+              color={'grey'}
+              align={'center'}
+              // fontWeight={'00'}
+              text="Saisissez le code ci-dessous pour continuer."
+            />
+          </View>
+          <OTPInputView
+            style={{ width: '60%', height: height * 0.1, alignSelf: 'center' }}
+            pinCount={4}
+            // autoFocusOnLoad
+            ref={inputRef}
+            autoFocusOnLoad={false}
+            codeInputFieldStyle={styles.underlineStyleBase}
+            codeInputHighlightStyle={styles.underlineStyleHighLighted}
+            onCodeFilled={code => {
+              console.log(`Code is ${code}, you are good to go!`);
+              // navigation.navigate('forget')
+              if (route?.params?.forgot) {
+                navigation.navigate('resetpassword')
+              } else {
+                loginAct('ahsanmuneer81@gmail.com', '1234567')
+              }
             }}
-            style={{alignSelf: 'center'}}>
-            <Text
-              style={{
-                fontWeight: '600',
-                fontSize: responsiveFontSize(1.8),
-                color: colors.themeblue,
-                textDecorationStyle: 'solid',
-                textDecorationLine: 'underline',
-              }}>
-              Vous n’avez pas reçu de code ?
-            </Text>
-          </TouchableOpacity>
-        </View>
+          />
+          <View
+            style={{
+              height: 40,
+              width: '100%',
+              justifyContent: 'flex-end',
+            }}>
+            <TouchableOpacity
+              onPress={() => {
+                setshow(true);
+              }}
+              style={{ alignSelf: 'center' }}>
+              <Text
+                style={{
+                  fontWeight: '600',
+                  fontSize: responsiveFontSize(1.8),
+                  color: colors.themeblue,
+                  textDecorationStyle: 'solid',
+                  textDecorationLine: 'underline',
+                }}>
+                Vous n’avez pas reçu de code ?
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
-      </ScrollView>
+      </View>
+      {/* </ScrollView> */}
     </View>
   );
 };
-export default EmailVerificationScreen;
 
+export default connect(null, Actions)(EmailVerificationScreen);
 const styles = StyleSheet.create({
   container: {
     flex: 1,

@@ -1,11 +1,24 @@
 // @ts-nocheck
-import {View, Text, ImageBackground, StatusBar, ScrollView, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  ImageBackground,
+  StatusBar,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
 import React from 'react';
-import {responsiveHeight, responsiveWidth, responsiveFontSize} from 'react-native-responsive-dimensions';
+import {
+  responsiveHeight,
+  responsiveWidth,
+  responsiveFontSize,
+} from 'react-native-responsive-dimensions';
 import Heading from '../../components/Heading';
 import Btn from '../../components/Btn';
+import {connect} from 'react-redux';
 import colors from '../../assets/colors/colors';
-export default function WalkthroughScreens({navigation}) {
+import * as Actions from '../../store/actions/authAct';
+const WalkthroughScreens = ({navigation, loginAct}) => {
   return (
     <View style={{flex: 1}}>
       <StatusBar
@@ -58,6 +71,7 @@ export default function WalkthroughScreens({navigation}) {
             <Btn
               pSText={{
                 fontWeight: 'bold',
+                color:'white'
               }}
               text="Créer un nouveau compte"
               color={'#353535'}
@@ -67,18 +81,34 @@ export default function WalkthroughScreens({navigation}) {
           </View>
           <View
             style={{
-              height: responsiveHeight(10),
+              height: responsiveHeight(5),
               // backgroundColor: 'white',
-              alignItems:'center',
-              alignSelf:'center',
-              justifyContent:'center'
+              alignItems: 'center',
+              alignSelf: 'center',
+              justifyContent: 'center',
             }}>
-               <TouchableOpacity style={{ width: responsiveWidth(50) }} onPress={() => console.log("AA")}>
-             <Text style={{ color: '#fac414', fontWeight: '400' ,fontSize:responsiveFontSize(2), textAlign:'center', textDecorationLine:'underline', textDecorationStyle:'italic' }}>S'enregistrer plus tard</Text>
-          </TouchableOpacity>
-            </View>
+            <TouchableOpacity
+              onPress={() => {
+                console.log('ASD');
+                loginAct('ahsanmuneer81@gmail.com', '1234567');
+              }}
+              style={{width: responsiveWidth(50)}}>
+              <Text
+                style={{
+                  color: '#fac414',
+                  fontWeight: '400',
+                  fontSize: responsiveFontSize(2),
+                  textAlign: 'center',
+                  textDecorationLine: 'underline',
+                }}>
+                S'enregistrer plus tard
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </ImageBackground>
     </View>
   );
-}
+};
+
+export default connect(null, Actions)(WalkthroughScreens);

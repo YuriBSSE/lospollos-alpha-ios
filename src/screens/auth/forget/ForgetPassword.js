@@ -21,9 +21,9 @@ import Heading from '../../../components/Heading';
 import Verfication from '../../Modal/VerificationModal';
 import LoadingScreen from '../../../components/LoadingScreen';
 let {width, height} = Dimensions.get('window');
-const ForgetScreen = ({navigation}) => {
+const ForgetScreen = ({navigation, route}) => {
   const [show, setshow] = useState(false);
-
+  console.log(route?.params?.text, "ASDADASDASDASD=====================")
   // if(true){
   //   return(
   //     <LoadingScreen />
@@ -48,6 +48,7 @@ const ForgetScreen = ({navigation}) => {
         ModalState={show}
         ChangeModalState={setshow}
         callBack={func}
+        navigation={navigation}
       />
       <StatusBar
         animated={true}
@@ -117,11 +118,11 @@ const ForgetScreen = ({navigation}) => {
           }}>
           <Heading
             fontsize={responsiveFontSize(2)}
-            width={'50%'}
+            width={'60%'}
             color={'black'}
             align={'center'}
             fontWeight={'800'}
-            text="Un code de réinitialisation de mot de passe a été envoyé à l’adresse mail j••••••@o••••••.fr"
+            text={route?.params?.text}
           />
           <Heading
            fontsize={responsiveFontSize(1.5)}
@@ -135,7 +136,7 @@ const ForgetScreen = ({navigation}) => {
         <OTPInputView
           style={{width: '60%', height: height * 0.1, alignSelf: 'center'}}
           pinCount={4}
-          autoFocusOnLoad
+        
           codeInputFieldStyle={styles.underlineStyleBase}
           
           onCodeFilled={code => {

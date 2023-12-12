@@ -67,21 +67,22 @@ const DropDownComp = ({
         onSelectItem(item);
       }}
       disabled={disable}
-      ArrowDownIconComponent={({style}) =>
-        error ? (
-          <ErrorIcon name="error" color={colors.errorRed} size={responsiveFontSize(tablet?1.25:2)} />
-        ) : (
-          <DownArrwIcon name="chevron-down-sharp" size={responsiveFontSize(tablet?1.25:2)} />
-        )
-      }
+      
+      // ArrowDownIconComponent={({style}) =>
+      //   error ? (
+      //     <ErrorIcon name="error" color={colors.errorRed} size={responsiveFontSize(tablet?1.25:2)} />
+      //   ) : (
+      //     <DownArrwIcon name="chevron-down-sharp" size={responsiveFontSize(tablet?1.25:2)} />
+      //   )
+      // }
       style={[
         {
           alignSelf: 'center',
-          borderColor: colors.silver,
+          borderColor: 'grey',
           height: responsiveHeight(6),
           minHeight: 10,
           width: responsiveWidth(90),
-          borderRadius: responsiveFontSize(tablet?0.4:0.75),
+          borderRadius: responsiveFontSize(tablet?0.4:0.9),
           borderWidth: 1,
         },
         style,
@@ -94,7 +95,7 @@ const DropDownComp = ({
       dropDownContainerStyle={[
         {
           backgroundColor: colors.white,
-          borderColor: colors.silver,
+          borderColor: 'grey',
           borderTopWidth: 0,
           borderStartWidth: 1,
           borderEndWidth: 1,
@@ -104,7 +105,8 @@ const DropDownComp = ({
         dropDownContainerStyle,
       ]}
       placeholderStyle={{
-        color: colors.gray,
+        color: '#BDBDBD',
+        fontSize:responsiveFontSize(1.6)
       }}
       placeholder={placeholdertxt || 'All'}
       searchPlaceholder={searchPlaceholderTxt || 'Search ...'}
@@ -135,7 +137,7 @@ const DropDownComp = ({
       }}
       closeOnBackPressed={true}
       disableBorderRadius={true}
-      
+    
       listMode={listMode}
       searchable={searchable}
       badgeDotColors={badgeDotColors}

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {
     View,
     Text,
@@ -108,7 +109,7 @@ export default function OrderDetails({navigation}) {
                   textAlign: 'left',
                   fontSize: responsiveScreenFontSize(2),
                   fontWeight: '800',
-                  color: 'yellow',
+                  color: '#F7BE00',
                 }}
                 numberOfLines={2}>
                 100
@@ -118,7 +119,7 @@ export default function OrderDetails({navigation}) {
                   textAlign: 'left',
                   fontSize: responsiveScreenFontSize(2),
                   fontWeight: '500',
-                  color: 'yellow',
+                  color: '#F7BE00',
                 }}>
                 {' '}
                 €{' '}
@@ -133,13 +134,13 @@ export default function OrderDetails({navigation}) {
                   <HomeIcon
                     name="heart-outline"
                     size={22}
-                    color={'yellow'}
+                    color={'#F7BE00'}
                   />
                 ) : (
                   <HomeIcon
                     name="heart"
                     size={22}
-                    color={'yellow'}
+                    color={'#F7BE00'}
                   />
                 )}
               </TouchableOpacity>
